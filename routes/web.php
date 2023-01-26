@@ -29,3 +29,7 @@ Route::get('welcome-admin', function() {
 Route::get('user-page', function() {
     return view('user');
 })->middleware('role:user')->name('user.page');
+
+Route::post('/register', [VerificationController::class, 'register']);
+Route::get('/verify/{id}', [VerificationController::class, 'verify']);
+Route::get('/home', [VerificationController::class, 'checkVerification'])->middleware('auth');
