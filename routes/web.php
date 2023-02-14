@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Controllers
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PurchaseOrderController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,24 +17,42 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// home
 Route::get('/', function () {
     return view('welcome');
 });
 
-
-
+// auth routes
 Auth::routes();
 
-Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('admin');
-Route::get('/user', [App\Http\Controllers\HomeController::class, 'index'])->name('user');
+// dashboard
+Route::group(['middleware' => 'auth'], function()
+{
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+});
 
+// users
+Route::group(['prefix' => 'users', 'middleware' => ['auth']], function ()
+{
+    // index users
+    Route::get('list', [UserController::class, 'index'])->name('user-list');
 
+    // change user status
+    Route::get('status/{userId}/{status}', [UserController::class, 'changeStatus'])->name('user-edit-status');
+});
 
-Route::get('welcome-admin', function() {
-    return view('admin');
-})->middleware('role:admin')->name('admin.page');
+// purchase order
+Route::group(['prefix' => 'purchase-order', 'middleware' => ['auth']], function ()
+{
+    // index PO
+    Route::get('list', [PurchaseOrderController::class, 'index'])->name('purchase-order-list');
 
-Route::get('user-page', function() {
-    return view('user');
-})->middleware('role:user')->name('user.page');
+    // create PO
+    Route::get('create', [PurchaseOrderController::class, 'create'])->name('purchase-order-create');
 
+    // post PO
+    Route::post('store', [PurchaseOrderController::class, 'store'])->name('purchase-order-store');
+
+    // ajax load product section
+    Route::get('ajax-product-section-data', [PurchaseOrderController::class, 'getProductSectionAjax'])->name('get-product-section-ajax');
+});

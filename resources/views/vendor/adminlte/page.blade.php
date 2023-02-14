@@ -3,6 +3,7 @@
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 
 @section('adminlte_css')
+    @include('layouts.htmlheader')
     @stack('css')
     @yield('css')
 @stop
@@ -52,6 +53,7 @@
 @stop
 
 @section('adminlte_js')
+    @include('layouts.scripts')
     @stack('js')
     @yield('js')
 @stop

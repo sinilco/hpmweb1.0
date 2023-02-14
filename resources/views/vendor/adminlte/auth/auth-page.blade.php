@@ -16,6 +16,9 @@
 @section('classes_body'){{ ($auth_type ?? 'login') . '-page' }}@stop
 
 @section('body')
+    @if($errors->any())
+        <h5 style="color:red;">{!! $errors->first() !!}</h5>
+    @endif
     <div class="{{ $auth_type ?? 'login' }}-box">
 
         {{-- Logo --}}

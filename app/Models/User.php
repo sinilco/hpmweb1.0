@@ -62,5 +62,16 @@ class User extends Authenticatable
     public function adminlte_profile_url()
     {
         return 'profile/username';
-}
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany('Spatie\Permission\Models\Role', 'model_has_roles', 'model_id', 'role_id');
+    }
+    
+    //many to many relation users - permissions
+    public function permissions()
+    {
+        return $this->belongsToMany('Spatie\Permission\Models\Permission', 'model_has_permissions', 'model_id', 'permission_id');
+    }
 }
