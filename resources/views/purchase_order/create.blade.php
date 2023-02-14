@@ -371,7 +371,7 @@
 
             // get input default weight on row keyup
             var inputDefaultWeightRow = table.row( $(this).closest('tr') ).nodes().reduce( function ( sum, node ) {
-                            return sum + parseInt($( node ).find( '.inputHiddenDefaultWeight' ).val().replace(/\,/g,""));
+                            return sum + parseFloat($( node ).find( '.inputHiddenDefaultWeight' ).val());
                         }, 0 );
 
             // count weight depend on length and qty
@@ -379,16 +379,13 @@
             var totalWeight = inputQtyRow * inputLengthRow * inputDefaultWeightRow;
 
             // set total weight to span and hidden input
-            // table.row( $(this).closest('tr') ).find('.inputWeight').val(totalWeight);
-            // table.row( $(this).closest('tr') ).nodes();
-                        var row= $(this).closest('tr');
-            var data = table.row( $(this).closest('tr') ).data()[7];
-            console.log(table.cell(row,0));
+            table.row( $(this).closest('tr') ).nodes().reduce( function ( sum, node ) {
+                    $( node ).find( '.inputWeight' ).html(totalWeight.toLocaleString("en-US"));
+                }, 0 );
 
-            // var inputDefaultWeightRow = table.row( $(this).closest('tr') ).nodes().reduce( function ( sum, node ) {
-            //                 return sum + parseInt($( node ).find( '.inputWeight' ).val(totalWeight));
-            //             }, 0 );
-            //             console.log();
+            table.row( $(this).closest('tr') ).nodes().reduce( function ( sum, node ) {
+                    $( node ).find( '.inputHiddenWeight' ).val(totalWeight);
+                }, 0 );
 
             // calculate total qty
             var totalQty = table.column( 6 ).nodes().reduce( function ( sum, node ) {
@@ -397,14 +394,14 @@
 
             // set total qty to table footer
             $('#totalQty').html(totalQty.toLocaleString("en-US"));
-        });
 
-        // triggering for update total weight
-        $(document).on('change', '.inputWeight', function ()
-        {
-            var totalWeight = table.column( 7 ).data().sum();
+            // calculate total weight
+            var totalColumnWeight = table.column( 7 ).nodes().reduce( function ( sum, node ) {
+                            return sum + parseFloat($( node ).find( '.inputHiddenWeight' ).val().replace(/\,/g,""));
+                        }, 0 );
 
-            $('#totalWeight').html(totalWeight.toLocaleString("en-US"));
+            // set total weight to table footer
+            $('#totalWeight').html(totalColumnWeight.toLocaleString("en-US"));
         });
 
         // remove row data
