@@ -383,7 +383,7 @@
             // table.row( $(this).closest('tr') ).nodes();
                         var row= $(this).closest('tr');
             var data = table.row( $(this).closest('tr') ).data()[7];
-            console.log(table.cell(row,0););
+            console.log(table.cell(row,0));
 
             // var inputDefaultWeightRow = table.row( $(this).closest('tr') ).nodes().reduce( function ( sum, node ) {
             //                 return sum + parseInt($( node ).find( '.inputWeight' ).val(totalWeight));
