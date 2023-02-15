@@ -26,9 +26,16 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="post" action="{{ route('purchase-order-store') }}"">
+                    <form method="post" action="{{ route('purchase-order-store') }}" id="formPo">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="row">
+                            <div class="col-12 form-group">
+                                <div class="row">
+                                    <div class="col-md-2 offset-md-10">
+                                        <button type="button" name="save" value="save" id="btnSubmitPo" class="form-control btn btn-sm btn-success">Send PO</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-12 form-group">
                                 <div class="form-group">
                                     <label>No Purchase Order</label>
@@ -36,20 +43,24 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Send To</label>
-                                    <input type="text" name="sendTo" value="{{ $user->name }}" class="form-control" placeholder="Address" autocomplete="off">
+                                    <input type="text" name="sendTo" value="{{ $user->name }}" class="form-control" placeholder="Address" autocomplete="off" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Notes</label>
-                                    <textarea name="notes" id="" rows="3" class="form-control"></textarea>
+                                    <textarea name="notes" id="" rows="3" class="form-control" required></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Material</label>
-                                    <select name="productMaterial" class="form-control" id="select-material">
+                                    <select name="productMaterial" class="form-control" id="select-material" required>
                                         <option value="" disabled selected>Pilih</option>
                                         @foreach ($productMaterial as $material)
                                             <option value="{{ $material->id }}">{{ $material->name }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name="tax" value="1">
+                                    <label>Tax</label>
                                 </div>
                             </div>
                         </div>
@@ -261,9 +272,9 @@
                 // add data to table
                 var sectionComponent = '<tr>'+
                                                 '<td>'+
-                                                    '<input type="hidden" name="sectionId[]" class="form-control" autocomplete="off" value="'+selectedSection.id+'">'+
                                                 '</td>'+
                                                 '<td>'+
+                                                    '<input type="hidden" name="sectionId[]" class="form-control" autocomplete="off" value="'+selectedSection.id+'">'+
                                                     '<div style="text-align: center;">'+
                                                         '<img class="fullSizeImage" style="max-width: 180px" src="'+baseURL+'/img/product_section/'+selectedSection.image_path+'" alt="">'+
                                                         '<br>'+
@@ -288,26 +299,26 @@
                                                 '<td>'+
                                                     '<div class="form-group">'+
                                                         '<select name="finishing[]" class="form-control" id="finish" style="width: 150px;">'+
-                                                            '<option value="Black Anodizing">Black Anodizing </option>'+
-                                                            '<option value="Protective Black Anodizing">Protective Black Anodizing </option>'+
-                                                            '<option value="Brown Anodizing">Brown Anodizing </option>'+
-                                                            '<option value="Protective Brown Anodizing">Protective Brown Anodizing </option>'+
-                                                            '<option value="Clear Anodizing">Clear Anodizing </option>'+
-                                                            '<option value="Protective Clear Anodizing">Protective Clear Anodizing </option>'+
-                                                            '<option value="CA Sand Blast">CA Sand Blast </option>'+
-                                                            '<option value="Dark Brown">Dark Brown </option>'+
-                                                            '<option value="DB Sand Blast">DB Sand Blast </option>'+
-                                                            '<option value="GL01">GL01 </option>'+
-                                                            '<option value="GL02">GL02 </option>'+
-                                                            '<option value="Protective GL02">Protective GL02 </option>'+
-                                                            '<option value="Gold Anodizing">Gold Anodizing </option>'+
-                                                            '<option value="Mill Finish">Mill Finish </option>'+
-                                                            '<option value="Jasa + Powder Coating">Jasa + Powder Coating </option>'+
-                                                            '<option value="Powder Coating">Powder Coating </option>'+
-                                                            '<option value="Polish">Polish </option>'+
-                                                            '<option value="Sand Blast">Sand Blast </option>'+
-                                                            '<option value="Satin Nickle Anodize">Satin Nickle Anodize </option>'+
-                                                            '<option value="Satin Silver">Satin Silver </option>'+
+                                                            '<option value="1">Black Anodizing </option>'+
+                                                            '<option value="2">Protective Black Anodizing </option>'+
+                                                            '<option value="3">Brown Anodizing </option>'+
+                                                            '<option value="4">Protective Brown Anodizing </option>'+
+                                                            '<option value="5">Clear Anodizing </option>'+
+                                                            '<option value="6">Protective Clear Anodizing </option>'+
+                                                            '<option value="7">CA Sand Blast </option>'+
+                                                            // '<option value="Dark Brown">Dark Brown </option>'+
+                                                            // '<option value="DB Sand Blast">DB Sand Blast </option>'+
+                                                            // '<option value="GL01">GL01 </option>'+
+                                                            // '<option value="GL02">GL02 </option>'+
+                                                            // '<option value="Protective GL02">Protective GL02 </option>'+
+                                                            // '<option value="Gold Anodizing">Gold Anodizing </option>'+
+                                                            // '<option value="Mill Finish">Mill Finish </option>'+
+                                                            // '<option value="Jasa + Powder Coating">Jasa + Powder Coating </option>'+
+                                                            // '<option value="Powder Coating">Powder Coating </option>'+
+                                                            // '<option value="Polish">Polish </option>'+
+                                                            // '<option value="Sand Blast">Sand Blast </option>'+
+                                                            // '<option value="Satin Nickle Anodize">Satin Nickle Anodize </option>'+
+                                                            // '<option value="Satin Silver">Satin Silver </option>'+
                                                         '</select>'+
                                                     '</div>'+
                                                 '</td>'+
@@ -416,6 +427,33 @@
                 cell.innerHTML = i + 1 + pageInfo.start;
             } );
         } );
+
+        // form validation
+        $('form #btnSubmitPo').click(function(e)
+        {
+            event.preventDefault();
+            if ( ! table.data().count() )
+            {
+                Swal.fire('Harap masukkan minimal 1 Section')
+            }
+            else
+            {
+                Swal.fire({
+                title: 'Send PO',
+                text: "Apakah anda yakin data PO sudah sesuai?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#formPo').submit();
+                    $(':input[type="submit"]').prop('disabled', true);
+                }
+                })
+            }
+        });
     </script>
 
     <script type="module">

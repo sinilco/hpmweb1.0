@@ -10,8 +10,13 @@
         "jeroennoten/laravel-adminlte": "^3.8",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
+        "laravel/telescope": "^4.13",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
+        "maatwebsite/excel": "^3.1",
+        "nesbot/carbon": "^2.66",
+        "phpoffice/phpspreadsheet": "^1.27",
+        "psr/simple-cache": "2.0",
         "spatie/laravel-permission": "^5.8"
     },
     "require-dev": {
@@ -28,7 +33,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/constants.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -10,6 +10,9 @@
 {{-- photoswipe --}}
 <link rel="stylesheet" href="{{ url('vendor/photoswipe/photoswipe.css') }}">
 
+{{-- sweetalert2 --}}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css" rel="stylesheet">
+
 <style>
     .select2-selection__rendered {
         line-height: 25px !important;

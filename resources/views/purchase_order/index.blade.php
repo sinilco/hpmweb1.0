@@ -25,6 +25,11 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="float-right">
+                        <a class="btn btn-success" name="btn" value="btnExcel" href="{{ route('purchase-order-export-excel') }}">Export Excel</a>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover" id="purchase-order-table">
@@ -58,10 +63,10 @@
                                             {{ $purchaseOrder->productMaterial->name ?? '-' }}
                                         </td>
                                         <td>
-                                            {{ $purchaseOrder->date ?? '-' }}
+                                            {{ $purchaseOrder->date->toDateString() ?? '-' }}
                                         </td>
                                         <td>
-                                            -
+                                            {{ $purchaseOrder->purchaseOrderStatus->name ?? '-' }}
                                         </td>
                                     </tr>
                                 @endforeach

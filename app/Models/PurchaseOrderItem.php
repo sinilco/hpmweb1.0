@@ -10,7 +10,7 @@ class PurchaseOrderItem extends Model
 {
     use SoftDeletes;
     use HasFactory;
-    
+
     /**
      * The database table used by the model.
      *
@@ -28,7 +28,7 @@ class PurchaseOrderItem extends Model
     protected $dates = [];
 
     protected $appends = [];
-    
+
     /**
      * The attributes that should be mutated to dates.
      *

@@ -28,7 +28,7 @@ class PurchaseOrder extends Model
     protected $dates = ['date'];
 
     protected $appends = [];
-    
+
     /**
      * The attributes that should be mutated to dates.
      *
@@ -61,4 +61,11 @@ class PurchaseOrder extends Model
         return $this->hasMany(PurchaseOrderItem::class);
     }
 
+    /**
+     * Get the purchase order status that owns the purchase order.
+     */
+    public function purchaseOrderStatus()
+    {
+        return $this->belongsTo(PurchaseOrderStatus::class);
+    }
 }

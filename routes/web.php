@@ -55,4 +55,7 @@ Route::group(['prefix' => 'purchase-order', 'middleware' => ['auth']], function 
 
     // ajax load product section
     Route::get('ajax-product-section-data', [PurchaseOrderController::class, 'getProductSectionAjax'])->name('get-product-section-ajax');
+
+    // export excel PO
+    Route::get('download-excel/', [PurchaseOrderController::class, 'exportExcel'])->name('purchase-order-export-excel');
 });
