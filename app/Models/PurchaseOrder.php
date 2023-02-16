@@ -27,7 +27,7 @@ class PurchaseOrder extends Model
 
     protected $dates = ['date'];
 
-    protected $appends = [];
+    protected $appends = ['total_qty', 'total_weight'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -67,5 +67,17 @@ class PurchaseOrder extends Model
     public function purchaseOrderStatus()
     {
         return $this->belongsTo(PurchaseOrderStatus::class);
+    }
+
+    //------------------------------------------- ADDED ATTRIBUTES -----------------------------------
+
+    public function getTotalQtyAttribute()
+    {
+        return $this->purchaseOrderItems->sum('qty');
+    }
+
+    public function getTotalWeightAttribute()
+    {
+        return $this->purchaseOrderItems->sum('total_weight');
     }
 }

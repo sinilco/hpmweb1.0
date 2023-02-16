@@ -17,7 +17,9 @@ use Carbon\Carbon;
 use DB;
 use Redirect;
 use Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
+use App\Exports\PurchaseOrderListExport;
 use App\Exports\PurchaseOrderExport;
 
 class PurchaseOrderController extends Controller
@@ -93,8 +95,10 @@ class PurchaseOrderController extends Controller
                     $purchaseOrderItem->product_section_id = $request->sectionId[$i];
                     $purchaseOrderItem->product_finishing_id = $request->finishing[$i];
                     $purchaseOrderItem->product_hardness_id = $request->hardness[$i];
+                    $purchaseOrderItem->weight = $request->defaultWeight[$i];
                     $purchaseOrderItem->length = $request->length[$i];
                     $purchaseOrderItem->qty = $request->quantity[$i];
+                    $purchaseOrderItem->total_weight = $request->defaultWeight[$i] * $request->length[$i] * $request->quantity[$i];
                     $purchaseOrderItem->save();
                 }
             });
@@ -125,7 +129,52 @@ class PurchaseOrderController extends Controller
                     'purchaseOrders' => $purchaseOrders
                 ];
 
-        $filename = 'export-purchase-order-data-'.$date->format('d-m-Y').'.xlsx';
+        $filename = 'export-purchase-order-list-'.$date->format('d-m-Y').'.xlsx';
+        return Excel::download(new PurchaseOrderListExport($data), $filename);
+    }
+
+    /**
+     * Export excel.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function detailExportExcel($id)
+    {
+        $date = Carbon::now();
+
+        $user = Auth::user();
+        $purchaseOrder = PurchaseOrder::with(['purchaseOrderStatus', 'user', 'productMaterial', 'purchaseOrderItems.productSection', 'purchaseOrderItems.productFinishing', 'purchaseOrderItems.productHardness'])
+                                        ->find($id);
+
+        $data = [
+                    'purchaseOrder' => $purchaseOrder
+                ];
+
+        $filename = 'export-purchase-order-'.$purchaseOrder->number.'-'.$date->format('d-m-Y').'.xlsx';
         return Excel::download(new PurchaseOrderExport($data), $filename);
+    }
+
+    /**
+     * Export pdf.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function detailExportPdf($id)
+    {
+        $date = Carbon::now();
+
+        $user = Auth::user();
+        $purchaseOrder = PurchaseOrder::with(['purchaseOrderStatus', 'user', 'productMaterial', 'purchaseOrderItems.productSection', 'purchaseOrderItems.productFinishing', 'purchaseOrderItems.productHardness'])
+                                        ->find($id);
+
+        $data = [
+                    'purchaseOrder' => $purchaseOrder
+                ];
+
+        $filename = 'export-purchase-order-'.$purchaseOrder->number.'.pdf';
+
+        $pdf = Pdf::loadView('purchase_order.detailExportPdf', $data);
+        return $pdf->download($filename);
+        return view('purchase_order.detailExportPdf', $data);
     }
 }

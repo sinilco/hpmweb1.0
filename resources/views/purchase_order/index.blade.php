@@ -27,7 +27,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="float-right">
-                        <a class="btn btn-success" name="btn" value="btnExcel" href="{{ route('purchase-order-export-excel') }}">Export Excel</a>
+                        <a class="btn btn-success" name="btn" value="btnExcel" href="{{ route('purchase-order-list-export-excel') }}">Export Excel</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -42,6 +42,7 @@
                                     <th scope="col">Material</th>
                                     <th scope="col">Tanggal</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -67,6 +68,10 @@
                                         </td>
                                         <td>
                                             {{ $purchaseOrder->purchaseOrderStatus->name ?? '-' }}
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm btn-success" name="btnDetailPo" href="{{ route('purchase-order-export-excel', ['id' => $purchaseOrder->id]) }}">Excel</a>
+                                            <a class="btn btn-sm btn-info" name="btnPdfDetailPo" href="{{ route('purchase-order-export-pdf', ['id' => $purchaseOrder->id]) }}">Pdf</a>
                                         </td>
                                     </tr>
                                 @endforeach

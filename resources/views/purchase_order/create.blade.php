@@ -59,8 +59,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <input type="checkbox" name="tax" value="1">
-                                    <label>Tax</label>
+                                    <input type="checkbox" id="tax-checkbox" name="tax" value="1">
+                                    <label for="tax-checkbox">Tax</label>
                                 </div>
                             </div>
                         </div>

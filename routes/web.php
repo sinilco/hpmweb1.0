@@ -57,5 +57,11 @@ Route::group(['prefix' => 'purchase-order', 'middleware' => ['auth']], function 
     Route::get('ajax-product-section-data', [PurchaseOrderController::class, 'getProductSectionAjax'])->name('get-product-section-ajax');
 
     // export excel PO
-    Route::get('download-excel/', [PurchaseOrderController::class, 'exportExcel'])->name('purchase-order-export-excel');
+    Route::get('download-excel/', [PurchaseOrderController::class, 'exportExcel'])->name('purchase-order-list-export-excel');
+
+    // export excel detail PO
+    Route::get('detail/download-excel/{id}', [PurchaseOrderController::class, 'detailExportExcel'])->name('purchase-order-export-excel');
+
+    // export pdf detail PO
+    Route::get('detail/download-pdf/{id}', [PurchaseOrderController::class, 'detailExportPdf'])->name('purchase-order-export-pdf');
 });

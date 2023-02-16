@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class PurchaseOrderExport implements FromView, ShouldAutoSize
+class PurchaseOrderListExport implements FromView, ShouldAutoSize
 {
     protected $data;
 
@@ -19,6 +19,6 @@ class PurchaseOrderExport implements FromView, ShouldAutoSize
 
     public function view(): View
     {
-        return view('purchase_order.detailExportExcel', $this->data);
+        return view('purchase_order.exportExcel', $this->data);
     }
 }
