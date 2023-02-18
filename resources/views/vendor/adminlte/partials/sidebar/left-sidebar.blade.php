@@ -20,7 +20,7 @@
                 @endif>
                 {{-- Configured sidebar links --}}
                 {{-- @each('adminlte::partials.sidebar.menu-item', $adminlte->menu('sidebar'), 'item') --}}
-                
+
                 {{-- Sidebar --}}
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link @if(Route::current()->getName() == 'dashboard') active @endif">
@@ -30,6 +30,7 @@
                         </p>
                     </a>
                 </li>
+                @hasanyrole('admin')
                 <li class="nav-item">
                     <a href="{{ route('user-list') }}" class="nav-link @if(Route::current()->getName() == 'user-list') active @endif">
                         <i class="nav-icon fas fa-users"></i>
@@ -38,8 +39,10 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview @if(Route::current()->getName() == 'purchase-order-list' || Route::current()->getName() == 'purchase-order-create') menu-open @endif">
-                    <a href="#" class="nav-link @if(Route::current()->getName() == 'purchase-order-list' || Route::current()->getName() == 'purchase-order-create') active @endif">
+                @endhasanyrole
+                @hasanyrole('admin|customer')
+                <li class="nav-item has-treeview @if(Route::current()->getName() == 'purchase-order-list' || Route::current()->getName() == 'purchase-order-create' || Route::current()->getName() == 'purchase-order-edit') menu-open @endif">
+                    <a href="#" class="nav-link @if(Route::current()->getName() == 'purchase-order-list' || Route::current()->getName() == 'purchase-order-create' || Route::current()->getName() == 'purchase-order-edit') active @endif">
                         <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>
                             Purchase Order
@@ -49,18 +52,19 @@
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('purchase-order-list') }}" class="nav-link @if(Route::current()->getName() == 'purchase-order-list') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="fas fa-list nav-icon"></i>
                                 <p>List</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('purchase-order-create') }}" class="nav-link @if(Route::current()->getName() == 'purchase-order-create') active @endif">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="<i fas fa-plus-square nav-icon"></i>
                                 <p>Create</p>
                             </a>
                         </li>
                     </ul>
                 </li>
+                @endhasanyrole
             </ul>
         </nav>
     </div>

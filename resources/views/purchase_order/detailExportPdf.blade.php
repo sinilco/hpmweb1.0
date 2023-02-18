@@ -10,7 +10,7 @@
 </style>
 <div class="row">
     <div class="col-12">
-        <img src="{{ asset('img/logo.png') }}" alt="" style="max-width: 900px">
+        <img src="{{ public_path('img/logo.png') }}" alt="" style="max-width: 600px">
     </div>
 </div>
 <div class="row">

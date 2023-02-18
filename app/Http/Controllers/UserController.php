@@ -19,7 +19,7 @@ class UserController extends Controller
     public function dashboard(Request $request)
     {
         $user = Auth::user();
-    
+
         $data['user'] = $user;
         return view('dashboard',$data);
     }
@@ -29,7 +29,7 @@ class UserController extends Controller
     {
         $data['users'] = User::with('roles', 'permissions')->get();
         $data['title'] = 'User List';
-        
+
         return view('users.index', $data);
     }
 
@@ -41,8 +41,15 @@ class UserController extends Controller
 
         // change the verified status
         $user->is_verified = $request->status;
+
+        // if user doesnt have role
+        // set default to customer
+        if(count($user->roles) < 1)
+        {
+            $user->assignRole(ROLE_CUSTOMER);
+        }
         $user->save();
-        
+
         return redirect()->route('user-list')->withMessage('a');
     }
 }

@@ -13,7 +13,7 @@
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('purchase-order-list') }}">Purchase Order</a></li>
-                <li class="breadcrumb-item active">Create</li>
+                <li class="breadcrumb-item active">Edit</li>
             </ol>
         </div>
     </div>
@@ -26,40 +26,40 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="post" action="{{ route('purchase-order-store') }}" id="formPo">
+                    <form method="post" action="{{ route('purchase-order-update', ['id' => $purchaseOrder->id]) }}" id="formPo">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="row">
                             <div class="col-12 form-group">
                                 <div class="row">
                                     <div class="col-md-2 offset-md-10">
-                                        <button type="button" name="save" value="save" id="btnSubmitPo" class="form-control btn btn-sm btn-success">Send PO</button>
+                                        <button type="button" name="save" value="save" id="btnSubmitPo" class="form-control btn btn-sm btn-success">Update PO</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 form-group">
                                 <div class="form-group">
                                     <label>No Purchase Order</label>
-                                    <input type="text" name="purchaseOrderNumber" value="" class="form-control" placeholder="No Purchase Order" autocomplete="off" disabled>
+                                    <input type="text" name="purchaseOrderNumber" value="{{ $purchaseOrder->number ?? '-' }}" class="form-control" placeholder="No Purchase Order" autocomplete="off" disabled>
                                 </div>
                                 <div class="form-group">
                                     <label>Send To</label>
-                                    <input type="text" name="sendTo" value="{{ $user->name }}" class="form-control" placeholder="Address" autocomplete="off" required>
+                                    <input type="text" name="sendTo" value="{{ $purchaseOrder->user->name ?? '-' }}" class="form-control" placeholder="Address" autocomplete="off" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Notes</label>
-                                    <textarea name="notes" id="" rows="3" class="form-control" required></textarea>
+                                    <textarea name="notes" id="" rows="3" class="form-control" required>{{ $purchaseOrder->notes ?? '-' }}</textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Material</label>
                                     <select name="productMaterial" class="form-control" id="select-material" required>
                                         <option value="" disabled selected>Pilih</option>
                                         @foreach ($productMaterial as $material)
-                                            <option value="{{ $material->id }}">{{ $material->name }}</option>
+                                            <option value="{{ $material->id }}" @if($material->id == $purchaseOrder->product_material_id) selected @endif>{{ $material->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <input type="checkbox" id="tax-checkbox" name="tax" value="1">
+                                    <input type="checkbox" id="tax-checkbox" name="tax" value="1" @if ($purchaseOrder->is_tax == 1) checked @endif>
                                     <label for="tax-checkbox">Tax</label>
                                 </div>
                             </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12" style="overflow-x: auto; width: 100%;">
-                                <div class="table-responsive" id="productItemSectionDiv">
+                                <div class="table-responsive"  id="productItemSectionDiv">
                                     <table class="table" id="table-po-item">
                                         <thead>
                                             <tr>
@@ -97,12 +97,67 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @foreach ($purchaseOrderItems as $purchaseOrderItem)
+                                            <tr>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                    <input type="hidden" name="sectionId[]" class="form-control" autocomplete="off" value="{{ $purchaseOrderItem->product_section_id }}">
+                                                    <div style="text-align: center;">
+                                                        <a href="{{ asset('img/product_section/'.$purchaseOrderItem->productSection->image_path) }}" data-pswp-src="{{ asset('img/product_section/'.$purchaseOrderItem->productSection->image_path) }}" data-pswp-width="300" data-pswp-height="300" data-pswp-srcset="{{ asset('img/product_section/'.$purchaseOrderItem->productSection->image_path) }}" target="_blank" class="imagePOitem">
+                                                            <img class="fullSizeImage" style="max-width: 180px" src="{{ asset('img/product_section/'.$purchaseOrderItem->productSection->image_path) }}" alt="">
+                                                        </a>
+                                                        <br>
+                                                        {{ $purchaseOrderItem->productSection->name ?? '-' }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {{ $purchaseOrderItem->productSection->description ?? '-' }}
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <select name="hardness[]" class="form-control" id="hardness" style="width: 70px;">
+                                                            @foreach ($productHardness as $hardness)
+                                                                <option value="{{ $hardness->id }}" @if ($hardness->id == $purchaseOrderItem->product_hardness_id) selected @endif>{{ $hardness->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <select name="finishing[]" class="form-control" id="finish" style="width: 150px;">
+                                                            @foreach ($productFinishing as $finishing)
+                                                                <option value="{{ $finishing->id }}" @if ($finishing->id == $purchaseOrderItem->product_finishing_id) selected @endif>{{ $finishing->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="text" name="length[]" class="form-control inputLength" autocomplete="off" value="{{ $purchaseOrderItem->length ?? 0 }}" style="width: 80px;">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="text" name="quantity[]" class="form-control inputQty" autocomplete="off" value="{{ $purchaseOrderItem->qty ?? 0 }}" style="width: 100px;">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="inputWeight">{{ $purchaseOrderItem->total_weight }}</span>
+                                                    <input type="hidden" name="defaultWeight[]" class="form-control inputHiddenDefaultWeight" autocomplete="off" value="{{ $purchaseOrderItem->weight }}">
+                                                    <input type="hidden" name="weight[]" class="form-control inputHiddenWeight" autocomplete="off" value="{{ $purchaseOrderItem->total_weight }}">
+                                                </td>
+                                                <td>
+                                                    <i class="fas fa-times remove" style="cursor: pointer;"></i>
+                                                </td>
+                                            </tr>
+                                            @endforeach
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <th colspan="6">TOTAL</th>
-                                                <th><span id="totalQty">0</span></th>
-                                                <th><span id="totalWeight">0</span></th>
+                                                <th><span id="totalQty">{{ $purchaseOrder->total_qty }}</span></th>
+                                                <th><span id="totalWeight">{{ $purchaseOrder->total_weight }}</span></th>
                                                 <th></th>
                                             </tr>
                                         </tfoot>
@@ -150,6 +205,8 @@
         );
 
         $(document).ready( function () {
+            table.draw();
+
             $('#select-material').select2({
                 placeholder: 'Select Material',
                 width: 'element',
@@ -160,6 +217,7 @@
 
                 $('#myModal').modal('show');
             });
+
 
             // product hardness from php to JS
             var productHardness = '';
@@ -172,6 +230,7 @@
             @foreach ( $productFinishing as $finishing)
                 productFinishing += '<option value="'+{{ $finishing->id }}+'">'+"{{ $finishing->name }}"+'</option>';
             @endforeach
+
 
             // format number to thousand separator
             function formatNumber(field)
@@ -454,10 +513,10 @@
         var lightbox = new PhotoSwipeLightbox({
                             gallery: '#productSectionDiv',
                             children: 'a',
-                            // dynamic import is not supported in UMD version
                             pswpModule: PhotoSwipe
                         });
                         lightbox.init();
+
         var lightbox2 = new PhotoSwipeLightbox({
                             gallery: '#productItemSectionDiv',
                             children: '.imagePOitem',

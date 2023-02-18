@@ -46,9 +46,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        
+
     ];
-    
+
     public function adminlte_image()
     {
         return 'https://picsum.photos/300/300';
@@ -64,11 +64,12 @@ class User extends Authenticatable
         return 'profile/username';
     }
 
-    public function roles()
-    {
-        return $this->belongsToMany('Spatie\Permission\Models\Role', 'model_has_roles', 'model_id', 'role_id');
-    }
-    
+    // dont need this relation, handled by HasRoles spatie
+    // public function roles()
+    // {
+    //     return $this->belongsToMany('Spatie\Permission\Models\Role', 'model_has_roles', 'model_id', 'role_id');
+    // }
+
     //many to many relation users - permissions
     public function permissions()
     {
