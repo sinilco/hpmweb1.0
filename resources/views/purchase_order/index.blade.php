@@ -72,8 +72,6 @@
                                         <td>
                                             <a class="btn btn-sm btn-success" name="btnDetailPo" href="{{ route('purchase-order-export-excel', ['id' => $purchaseOrder->id]) }}">Excel</a>
                                             <a class="btn btn-sm btn-info" name="btnPdfDetailPo" href="{{ route('purchase-order-export-pdf', ['id' => $purchaseOrder->id]) }}">Pdf</a>
-                                            <a class="btn btn-sm btn-warning" name="btnEditPo" href="{{ route('purchase-order-edit', ['id' => $purchaseOrder->id]) }}">Edit</a>
-                                            <a class="btn btn-sm btn-danger" name="btnDeletePo" href="{{ route('purchase-order-delete', ['id' => $purchaseOrder->id]) }}">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach

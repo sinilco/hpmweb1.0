@@ -28,17 +28,9 @@ class PurchaseOrderController extends Controller
     public function index()
     {
         $data['title'] = 'List Purchase Order';
-        $user = Auth::user();
-        $purchaseOrders = PurchaseOrder::with(['purchaseOrderStatus', 'user', 'productMaterial', 'purchaseOrderItems']);
+        $data['user'] = Auth::user();
+        $data['purchaseOrders'] = PurchaseOrder::with(['purchaseOrderStatus', 'user', 'productMaterial', 'purchaseOrderItems'])->get();
 
-        if($user->hasRole('customer'))
-        {
-            $purchaseOrders = $purchaseOrders->where('user_id', $user->id);
-        }
-
-        $purchaseOrders = $purchaseOrders->get();
-        $data['user'] = $user;
-        $data['purchaseOrders'] = $purchaseOrders;
         return view('purchase_order.index', $data);
     }
 
@@ -50,6 +42,11 @@ class PurchaseOrderController extends Controller
         $data['productHardness'] = ProductHardness::get();
         $data['productMaterial'] = ProductMaterial::get();
         $data['productSection'] = ProductSection::get();
+        // $data['productSectionJson'] = ProductSection::get()
+        //                                         ->map(function ($product) {
+        //                                             return ['id' => $product->id , 'name' => $product->name, 'description' => $product->description, 'weight' => $product->weight, 'image_path' => $product->image_path];
+        //                                         })
+        //                                         ->toJson();
         $data['productFinishing'] = ProductFinishing::get();
 
         return view('purchase_order.create', $data);
@@ -116,125 +113,6 @@ class PurchaseOrderController extends Controller
         }
     }
 
-    // edit purchase order
-    public function edit($id)
-    {
-        $data['title'] = 'Edit Purchase Order';
-        $data['user'] = Auth::user();
-        $data['productHardness'] = ProductHardness::get();
-        $data['productMaterial'] = ProductMaterial::get();
-        $data['productSection'] = ProductSection::get();
-        $data['productFinishing'] = ProductFinishing::get();
-        $purchaseOrder = PurchaseOrder::with('productMaterial', 'user', 'purchaseOrderItems.productSection', 'purchaseOrderItems.productFinishing', 'purchaseOrderItems.productHardness')->find($id);
-        $data['purchaseOrder'] = $purchaseOrder;
-        $data['purchaseOrderItems'] = $purchaseOrder->purchaseOrderItems;
-
-        return view('purchase_order.edit', $data);
-    }
-
-    public function update(Request $request, $id)
-    {
-        try
-        {
-            $user = Auth::user();
-
-            DB::transaction(function () use ($request, $user, $id)
-            {
-                $requestItems = count($request->hardness);
-
-                // save PO
-                $purchaseOrder = PurchaseOrder::with('purchaseOrderItems')->find($id);
-                $purchaseOrder->product_material_id = $request->productMaterial;
-                $purchaseOrder->purchase_order_status_id = PURCHASE_ORDER_STATUS_SEND;
-                $purchaseOrder->notes = $request->notes;
-                if($request->tax)
-                {
-                    $purchaseOrder->is_tax = $request->tax;
-                }
-                else
-                {
-                    $purchaseOrder->is_tax = 0;
-                }
-                $purchaseOrder->save();
-
-                $purchaseOrderItems = $purchaseOrder->purchaseOrderItems;
-
-                for ($i=0; $i < $requestItems; $i++)
-                {
-                    // condition when request item is equal or greater than saved data
-                    if ($i < $purchaseOrderItems->count())
-                    {
-                        $purchaseOrderItem = $purchaseOrderItems[$i];
-                    }
-                    else
-                    {
-                        $purchaseOrderItem = new PurchaseOrderItem();
-                    }
-
-                    // purchase order item
-                    $purchaseOrderItem->purchase_order_id = $purchaseOrder->id;
-                    $purchaseOrderItem->product_section_id = $request->sectionId[$i];
-                    $purchaseOrderItem->product_finishing_id = $request->finishing[$i];
-                    $purchaseOrderItem->product_hardness_id = $request->hardness[$i];
-                    $purchaseOrderItem->weight = $request->defaultWeight[$i];
-                    $purchaseOrderItem->length = $request->length[$i];
-                    $purchaseOrderItem->qty = $request->quantity[$i];
-                    $purchaseOrderItem->total_weight = $request->defaultWeight[$i] * $request->length[$i] * $request->quantity[$i];
-                    $purchaseOrderItem->save();
-                }
-
-                // condition when request item is less than saved data
-                // delete item if request form count less than request item count
-                if ($requestItems < $purchaseOrderItems->count())
-                {
-                    for ($i=$requestItems; $i < $purchaseOrderItems->count(); $i++) {
-                        $requestItem = $purchaseOrderItems[$i];
-                        $requestItem->delete();
-                    }
-                }
-            });
-
-            return redirect()->back()->withMessage('Update PO Success');
-        }
-        catch (\Exception $e)
-        {
-            dd($e);
-            \Log::info($e);
-            return redirect()->back()->withMessage('Terjadi Kesalahan');
-        }
-    }
-
-    public function delete($id)
-    {
-        try
-        {
-            $user = Auth::user();
-
-            DB::transaction(function () use ($user, $id)
-            {
-                // get PO
-                $purchaseOrder = PurchaseOrder::with('purchaseOrderItems')->find($id);
-
-                // delete item PO
-                foreach ($purchaseOrder->purchaseOrderItems as $key => $purchaseOrderItem)
-                {
-                    $purchaseOrderItem->delete();
-                }
-
-                // delete PO
-                $purchaseOrder->delete();
-            });
-
-            return redirect()->back()->withMessage('Delete PO Success');
-        }
-        catch (\Exception $e)
-        {
-            dd($e);
-            \Log::info($e);
-            return redirect()->back()->withMessage('Terjadi Kesalahan');
-        }
-    }
-
     /**
      * Export excel.
      *
@@ -245,14 +123,7 @@ class PurchaseOrderController extends Controller
         $date = Carbon::now();
 
         $user = Auth::user();
-        $purchaseOrders = PurchaseOrder::with(['purchaseOrderStatus', 'user', 'productMaterial', 'purchaseOrderItems.productSection', 'purchaseOrderItems.productFinishing', 'purchaseOrderItems.productHardness']);
-
-        if($user->hasRole('customer'))
-        {
-            $purchaseOrders = $purchaseOrders->where('user_id', $user->id);
-        }
-
-        $purchaseOrders = $purchaseOrders->get();
+        $purchaseOrders = PurchaseOrder::with(['purchaseOrderStatus', 'user', 'productMaterial', 'purchaseOrderItems.productSection', 'purchaseOrderItems.productFinishing', 'purchaseOrderItems.productHardness'])->get();
 
         $data = [
                     'purchaseOrders' => $purchaseOrders

@@ -53,15 +53,6 @@ Route::group(['prefix' => 'purchase-order', 'middleware' => ['auth']], function 
     // post PO
     Route::post('store', [PurchaseOrderController::class, 'store'])->name('purchase-order-store');
 
-    // edit PO
-    Route::get('edit/{id}', [PurchaseOrderController::class, 'edit'])->name('purchase-order-edit');
-
-    // update PO
-    Route::post('update/{id}', [PurchaseOrderController::class, 'update'])->name('purchase-order-update');
-
-    // delete PO
-    Route::get('delete/{id}', [PurchaseOrderController::class, 'delete'])->name('purchase-order-delete');
-
     // ajax load product section
     Route::get('ajax-product-section-data', [PurchaseOrderController::class, 'getProductSectionAjax'])->name('get-product-section-ajax');
 

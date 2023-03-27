@@ -81,7 +81,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12" style="overflow-x: auto; width: 100%;">
-                                <div class="table-responsive" id="productItemSectionDiv">
+                                <div class="table-responsive">
                                     <table class="table" id="table-po-item">
                                         <thead>
                                             <tr>
@@ -160,18 +160,6 @@
 
                 $('#myModal').modal('show');
             });
-
-            // product hardness from php to JS
-            var productHardness = '';
-            @foreach ( $productHardness as $hardness)
-                productHardness += '<option value="'+{{ $hardness->id }}+'">'+"{{ $hardness->name }}"+'</option>';
-            @endforeach
-
-            // product finishing from php to JS
-            var productFinishing = '';
-            @foreach ( $productFinishing as $finishing)
-                productFinishing += '<option value="'+{{ $finishing->id }}+'">'+"{{ $finishing->name }}"+'</option>';
-            @endforeach
 
             // format number to thousand separator
             function formatNumber(field)
@@ -288,9 +276,7 @@
                                                 '<td>'+
                                                     '<input type="hidden" name="sectionId[]" class="form-control" autocomplete="off" value="'+selectedSection.id+'">'+
                                                     '<div style="text-align: center;">'+
-                                                        '<a href="'+baseURL+'/img/product_section/'+selectedSection.image_path+'" data-pswp-src="'+baseURL+'/img/product_section/'+selectedSection.image_path+'" data-pswp-width="300" data-pswp-height="300" data-pswp-srcset="'+baseURL+'/img/product_section/'+selectedSection.image_path+'" target="_blank" class="imagePOitem">'+
                                                         '<img class="fullSizeImage" style="max-width: 180px" src="'+baseURL+'/img/product_section/'+selectedSection.image_path+'" alt="">'+
-                                                        '</a>'+
                                                         '<br>'+
                                                         selectedSection.name +
                                                     '</div>'+
@@ -301,14 +287,38 @@
                                                 '<td>'+
                                                     '<div class="form-group">'+
                                                         '<select name="hardness[]" class="form-control" id="hardness" style="width: 70px;">'+
-                                                            productHardness+
+                                                            '<option value="2">T4 </option>'+
+                                                            '<option value="3">T5 </option>'+
+                                                            '<option value="4">T6 </option>'+
+                                                            '<option value="6">T52 </option>'+
+                                                            '<option value="7">TO </option>'+
+                                                            '<option value="8">T61 </option>'+
                                                         '</select>'+
                                                     '</div>'+
                                                 '</td>'+
                                                 '<td>'+
                                                     '<div class="form-group">'+
                                                         '<select name="finishing[]" class="form-control" id="finish" style="width: 150px;">'+
-                                                            productFinishing+
+                                                            '<option value="1">Black Anodizing </option>'+
+                                                            '<option value="2">Protective Black Anodizing </option>'+
+                                                            '<option value="3">Brown Anodizing </option>'+
+                                                            '<option value="4">Protective Brown Anodizing </option>'+
+                                                            '<option value="5">Clear Anodizing </option>'+
+                                                            '<option value="6">Protective Clear Anodizing </option>'+
+                                                            '<option value="7">CA Sand Blast </option>'+
+                                                            // '<option value="Dark Brown">Dark Brown </option>'+
+                                                            // '<option value="DB Sand Blast">DB Sand Blast </option>'+
+                                                            // '<option value="GL01">GL01 </option>'+
+                                                            // '<option value="GL02">GL02 </option>'+
+                                                            // '<option value="Protective GL02">Protective GL02 </option>'+
+                                                            // '<option value="Gold Anodizing">Gold Anodizing </option>'+
+                                                            // '<option value="Mill Finish">Mill Finish </option>'+
+                                                            // '<option value="Jasa + Powder Coating">Jasa + Powder Coating </option>'+
+                                                            // '<option value="Powder Coating">Powder Coating </option>'+
+                                                            // '<option value="Polish">Polish </option>'+
+                                                            // '<option value="Sand Blast">Sand Blast </option>'+
+                                                            // '<option value="Satin Nickle Anodize">Satin Nickle Anodize </option>'+
+                                                            // '<option value="Satin Silver">Satin Silver </option>'+
                                                         '</select>'+
                                                     '</div>'+
                                                 '</td>'+
@@ -408,10 +418,6 @@
         // remove row data
         $('#table-po-item').on('click', '.remove', function () {
             table.row($(this).parents('tr')).remove().draw();
-
-            // trigger the inputQty and inputWeight
-            $('.inputQty').trigger('keyup');
-            $('.inputWeight').trigger('change');
 		});
 
         // set numeral index
@@ -458,11 +464,5 @@
                             pswpModule: PhotoSwipe
                         });
                         lightbox.init();
-        var lightbox2 = new PhotoSwipeLightbox({
-                            gallery: '#productItemSectionDiv',
-                            children: '.imagePOitem',
-                            pswpModule: PhotoSwipe
-                        });
-                        lightbox2.init();
     </script>
 @stop
